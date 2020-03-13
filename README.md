@@ -327,4 +327,132 @@
     (λ (p)
       (elim-Pair
         E E E p (λ (a d) d)))))
+        
+;; Exercise 4.2
+;;
+;; Define a function called compose that takes (in addition to the type
+;; arguments A, B, C) an argument of type (-> A B) and an argument of
+;; type (-> B C) that and evaluates to a value of type (-> A C), the function
+;; composition of the arguments.
+
+(claim compose
+  (Pi ((A U)
+       (B U)
+       (C U))
+    (-> (-> A B) (-> B C) (-> A C))))
+
+(define compose
+  (λ (A B C)
+    (λ (f g)
+      (λ (x) (g (f x))))))
+
+;; Exercise 5.1
+;;
+;; Define a function called sum-List that takes one List Nat argument and
+;; evaluates to a Nat, the sum of the Nats in the list.
+
+(claim +
+  (-> Nat Nat Nat))
+
+(claim step-+
+  (-> Nat Nat Nat))
+
+(define step-+
+  (λ (n-1 step_n-1)
+    (add1 step_n-1)))
+
+(define +
+  (λ (n j)
+    (rec-Nat n
+      j
+      step-+)))
+
+(claim sum-List
+  (-> (List Nat) Nat))
+
+(define sum-List
+  (λ (l)
+    (rec-List l
+      0
+      (λ (e _ s) (+ e s)))))
+
+;; Exercise 5.2
+;;
+;; Define a function called maybe-last which takes (in addition to the type
+;; argument for the list element) one (List E) argument and one E argument and
+;; evaluates to an E with value of either the last element in the list, or the
+;; value of the second argument if the list is empty.
+
+(claim step-append
+  (Π ((E U))
+    (-> E (List E) (List E) (List E))))
+
+(define step-append
+  (λ (E)
+    (lambda (e es appendes)
+      (:: e appendes))))
+
+(claim snoc
+  (Pi ((E U))
+    (-> (List E) E
+      (List E))))
+
+(define snoc
+  (lambda (E)
+    (lambda (start e)
+      (rec-List start
+        (:: e nil)
+        (step-append E)))))
+
+(claim reverse
+  (Pi ((E U))
+    (-> (List E) (List E))))
+
+(claim step-reverse
+  (Pi ((E U))
+    (-> E (List E) (List E) (List E))))
+
+(define step-reverse
+  (λ (E)
+    (λ (e es reversees)
+      (snoc E reversees e))))
+
+(define reverse
+  (λ (E)
+    (λ (l)
+      (rec-List l
+        (the (List E) nil)
+        (step-reverse E)))))
+
+(claim maybe-last
+  (Pi ((E U))
+    (-> (List E) E E)))
+
+(define maybe-last
+  (λ (E)
+    (λ (l e)
+      (rec-List (reverse E l)
+        e
+        (λ (x _ _)
+          x)))))
+
+;; Exercise 5.3
+;;
+;; Define a function called filter-list which takes (in addition to the type
+;; argument for the list element) one (-> E Nat) argument representing a
+;; predicate and one (List E) argument.
+;;
+;; The function evaluates to a (List E) consisting of elements from the list
+;; argument where the predicate is true.
+;;
+;; Consider the predicate to be false for an element if it evaluates to zero,
+;; and true otherwise.
+
+
+;; Exercise 5.4
+;;
+;; Define a function called sort-List-Nat which takes one (List Nat) argument
+;; and evaluates to a (List Nat) consisting of the elements from the list
+;; argument sorted in ascending order.
+        
 ```
