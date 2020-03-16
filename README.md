@@ -448,6 +448,19 @@
 ;; Consider the predicate to be false for an element if it evaluates to zero,
 ;; and true otherwise.
 
+(claim filter-list
+  (Pi ((E U))
+    (-> (List E) (-> E Nat) (List E))))
+
+(define filter-list
+  (λ (E)
+    (λ (l p)
+      (rec-List l
+        (the (List E) nil)
+        (λ (e es s)
+          (which-Nat (p e)
+            s
+            (λ (_) (:: e s))))))))
 
 ;; Exercise 5.4
 ;;
