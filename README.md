@@ -468,4 +468,65 @@
 ;; and evaluates to a (List Nat) consisting of the elements from the list
 ;; argument sorted in ascending order.
         
+(claim dec
+  (-> Nat Nat))
+
+(define dec
+  (λ (x)
+    (which-Nat x
+      0
+      (λ (x) x))))
+
+(claim max
+  (-> Nat Nat Nat))
+
+(claim mon
+  (-> Nat Nat Nat))
+
+(define mon
+  (λ (a b)
+    (iter-Nat b
+      a
+      (λ (x) (dec x)))))
+
+(claim head-Nat
+  (-> (List Nat) Nat))
+
+(define head-Nat
+  (λ (l)
+    (rec-List l
+      0
+      (λ (s _ _) s))))
+
+(claim tail-Nat
+  (-> (List Nat) (List Nat)))
+
+(define tail-Nat
+  (λ (l)
+    (rec-List l
+      (the (List Nat) nil)
+      (λ (_ es _) es))))
+      
+(claim insert-Nat
+  (-> (List Nat) Nat (List Nat)))
+
+(define insert-Nat
+  (λ (l n)
+    (rec-List l
+      (:: n nil)
+      (λ (s _ rec)
+        (which-Nat (mon (head-Nat rec) s)
+          (:: (head-Nat rec) (:: s (tail-Nat rec)))
+          (λ (_) (:: s rec)))))))
+
+(claim sort-List-Nat
+  (-> (List Nat) (List Nat)))
+
+(define sort-List-Nat
+  (λ (l)
+    (rec-List l
+      (the (List Nat) nil)
+      (λ (s _ rec)
+        (insert-Nat rec s)))))
+
 ```
