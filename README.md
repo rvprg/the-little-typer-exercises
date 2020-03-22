@@ -530,3 +530,71 @@
         (insert-Nat rec s)))))
 
 ```
+
+```
+#lang pie
+
+;; Exercises on Vec and ind-Nat from Chapters 6 and 7 of The Little
+;; Typer
+
+(claim +
+  (-> Nat Nat
+    Nat))
+
+(define +
+  (λ (a b)
+    (rec-Nat a
+      b
+      (λ (a-k b+a-k)
+        (add1 b+a-k)))))
+
+;; Exercise 7.0
+;;
+;; Define a function called zip that takes an argument of type (Vec A n) and a
+;; second argument of type (Vec B n) and evaluates to a vlue of type (Vec (Pair A B) n),
+;; the result of zipping the first and second arguments.
+
+(claim zip
+  (Pi ((A U)
+       (B U)
+       (n Nat))
+    (-> (Vec A n) (Vec B n) (Vec (Pair A B) n))))
+
+(claim zip-motive
+  (Pi ((A U)
+       (B U)
+       (n Nat))
+    U))
+
+(define zip-motive
+  (λ (A B n)
+    (-> (Vec A n) (Vec B n) (Vec (Pair A B) n))))
+
+(claim zip-step
+  (Pi ((A U)
+       (B U)
+       (n Nat))
+    (-> (zip-motive A B n)
+      (zip-motive A B (add1 n)))))
+
+(define zip-step
+  (λ (A B n)
+    (λ (zip_n-1)
+      (λ (v1 v2)
+        (vec:: (cons (head v1) (head v2)) (zip_n-1 (tail v1) (tail v2)))))))
+
+(define zip
+  (λ (A B n)
+    (ind-Nat n
+      (zip-motive A B)
+      (λ (_ _) (the (Vec (Pair A B) zero) vecnil))
+      (zip-step A B))))
+
+(check-same (Vec (Pair Nat Atom) 0) 
+  (zip Nat Atom 0 vecnil vecnil)
+  vecnil)
+
+(check-same (Vec (Pair Nat Atom) 2) 
+  (zip Nat Atom 2 (vec:: 1 (vec:: 2 vecnil)) (vec:: 'a (vec:: 'b vecnil)))
+  (vec:: (cons 1 'a) (vec:: (cons 2 'b) vecnil)))
+```
