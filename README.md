@@ -597,4 +597,64 @@
 (check-same (Vec (Pair Nat Atom) 2) 
   (zip Nat Atom 2 (vec:: 1 (vec:: 2 vecnil)) (vec:: 'a (vec:: 'b vecnil)))
   (vec:: (cons 1 'a) (vec:: (cons 2 'b) vecnil)))
+  
+;; Exercise 7.1
+;;
+;; Define a function called append that takes an argument of type (Vec E n) and an
+;; argument of type (Vect E m) and evaluates to a value of type (Vec (+ n m)), the
+;; result of appending the elements of the second argument to the end of the first.
+
+(claim append
+  (Π ([E U]
+      [m Nat]
+      [n Nat])
+    (-> (Vec E m) (Vec E n)
+      (Vec E (+ n m)))))
+
+(claim append-motive
+  (Pi ((E U)
+       (m Nat)
+       (n Nat))
+    U))
+
+(define append-motive
+  (λ (E m n)
+    (-> (Vec E m) (Vec E n)
+      (Vec E (+ n m)))))
+
+(claim append-step
+  (Pi ((E U)
+       (m Nat)
+       (n Nat))
+    (-> (append-motive E m n)
+      (append-motive E m (add1 n)))))
+
+(define append-step
+  (λ (E m n)
+    (λ (append_n-1)
+      (λ (v1 v2)
+        (vec:: (head v2) (append_n-1 v1 (tail v2)))))))
+
+(claim append-base
+  (Pi ((E U)
+       (m Nat))
+    (append-motive E m 0)))
+
+(define append-base
+  (λ (E m)
+    (λ (v1 v2) v1)))
+
+(define append
+  (λ (E m n)
+    (ind-Nat n
+      (append-motive E m)
+      (append-base E m)
+      (append-step E m))))
+
+(check-same (Vec Atom 5)
+  (append Atom 2 3
+    (vec:: 'a (vec:: 'b vecnil))
+    (vec:: 'c (vec:: 'd (vec:: 'e vecnil))))
+  (vec:: 'c (vec:: 'd (vec:: 'e (vec:: 'a (vec:: 'b vecnil))))))
+
 ```
