@@ -710,3 +710,32 @@
         (drop-last-k-base E k)
         (drop-last-k-step E k))))
 ```
+
+```
+#lang pie
+
+;; Exercises on Nat equality from Chapter 8 and 9 of The Little Typer
+
+(claim +
+       (-> Nat Nat
+           Nat))
+
+(define +
+  (λ (a b)
+    (rec-Nat a
+             b
+             (λ (_ b+a-k)
+               (add1 b+a-k)))))
+
+;; Exercise 8.1
+;; Define a function called zero+n=n that states and proves that
+;; 0+n = n for all Nat n.
+
+(claim zero+n=n
+  (Pi ((n Nat))
+    (= Nat n (+ zero n))))
+
+(define zero+n=n
+  (λ (n)
+    (same n)))
+```
