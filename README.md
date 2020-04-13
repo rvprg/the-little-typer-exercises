@@ -738,4 +738,24 @@
 (define zero+n=n
   (λ (n)
     (same n)))
+    
+;; Exercise 8.2
+;;
+;; Define a function called a=b->a+n=b+n that states and proves that
+;; a = b implies a+n = b+n for all Nats a, b, n.
+
+(claim a=b->a+n=b+n
+  (Pi ((a Nat)
+       (b Nat)
+       (n Nat))
+    (-> (= Nat a b)
+      (= Nat (+ a n) (+ b n)))))
+
+(define a=b->a+n=b+n
+  (λ (a b n)
+    (λ (p)
+      (replace p
+        (λ (k)
+          (= Nat (+ a n) (+ k n)))
+        (same (+ a n))))))
 ```
