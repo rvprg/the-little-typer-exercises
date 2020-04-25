@@ -778,5 +778,27 @@
            (= Nat (+ k (+ n m)) (+ (+ k n) m)))
         (same (+ n m))
         (λ (_ e)
-          (cong e (+ 1)))))))        
+          (cong e (+ 1)))))))    
+          
+;; Exercise 9.1
+;;
+;; Define a function called same-cons that states and proves that
+;; if you cons the same value to the front of two equal Lists then
+;; the resulting Lists are also equal.
+
+(claim same-cons
+  (Π ([E U]
+      [l1 (List E)]
+      [l2 (List E)]
+      [e E])
+    (-> (= (List E) l1 l2)
+      (= (List E) (:: e l1) (:: e l2)))))
+
+(define same-cons
+  (λ (E l1 l2 e)
+    (λ (s)
+      (replace s
+        (λ (x)
+          (= (List E) (:: e l1) (:: e x)))
+        (same (:: e l1))))))
 ```
