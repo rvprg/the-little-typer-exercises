@@ -758,4 +758,25 @@
         (λ (k)
           (= Nat (+ a n) (+ k n)))
         (same (+ a n))))))
+        
+;; Exercise 8.3
+;;
+;; Define a function called plusAssociative that states and proves that
+;; + is associative.
+
+(claim plusAssociative
+  (Π ([n Nat]
+      [m Nat]
+      [k Nat])
+    (= Nat (+ k (+ n m)) (+ (+ k n) m))))
+
+(define plusAssociative
+  (λ (n m)
+    (λ (k)
+      (ind-Nat k
+         (λ (k)
+           (= Nat (+ k (+ n m)) (+ (+ k n) m)))
+        (same (+ n m))
+        (λ (_ e)
+          (cong e (+ 1)))))))        
 ```
