@@ -801,4 +801,28 @@
         (λ (x)
           (= (List E) (:: e l1) (:: e x)))
         (same (:: e l1))))))
+
+;; Exercise 9.2
+;;
+;; Define a function called same-lists that states and proves that
+;; if two values, e1 and e2, are equal and two lists, l1 and l2 are
+;; equal then the two lists, (:: e1 l1) and (:: e2 l2) are also equal.
+
+(claim same-lists
+  (Pi ((E U)
+       (l1 (List E))
+       (l2 (List E))
+       (e1 E)
+       (e2 E))
+    (-> (= E e1 e2) (= (List E) l1 l2)
+        (= (List E) (:: e1 l1) (:: e2 l2)))))
+
+(define same-lists
+  (λ (E l1 l2 e1 e2)
+    (λ (e1=e2 l1=l2)
+      (replace e1=e2
+        (λ (x)
+          (= (List E) (:: e1 l1) (:: x l2)))
+        (same-cons E l1 l2 e1 l1=l2)))))
+
 ```
