@@ -826,3 +826,118 @@
         (same-cons E l1 l2 e1 l1=l2)))))
 
 ```
+
+```
+#lang pie
+
+;; Exercises on ind-Nat from Chapter 10 of The Little Typer
+
+(claim +
+       (-> Nat Nat
+           Nat))
+
+(define +
+  (λ (a b)
+    (rec-Nat a
+             b
+             (λ (_ b+a-k)
+               (add1 b+a-k)))))
+
+(claim length
+       (Π ([E U])
+          (-> (List E)
+              Nat)))
+
+(define length
+  (λ (_)
+    (λ (es)
+      (rec-List es
+                0
+                (λ (_ _ almost-length)
+                  (add1 almost-length))))))
+
+(claim step-append
+       (Π ([E U])
+          (-> E (List E) (List E)
+              (List E))))
+
+(define step-append
+  (λ (E)
+    (λ (e es append-es)
+      (:: e append-es))))
+
+(claim append
+       (Π ([E U])
+          (-> (List E) (List E)
+              (List E))))
+
+(define append
+  (λ (E)
+    (λ (start end)
+      (rec-List start
+                end
+                (step-append E)))))
+
+(claim filter-list
+       (Π ([E U])
+          (-> (-> E Nat) (List E)
+              (List E))))
+
+(claim filter-list-step
+       (Π ([E U])
+          (-> (-> E Nat)
+              (-> E (List E) (List E)
+                  (List E)))))
+
+(claim if
+       (Π ([A U])
+          (-> Nat A A
+              A)))
+
+(define if
+  (λ (A)
+    (λ (e if-then if-else)
+      (which-Nat e
+                 if-else
+                 (λ (_) if-then)))))
+
+(define filter-list-step
+  (λ (E)
+    (λ (p)
+      (λ (e es filtered-es)
+        (if (List E) (p e)
+            (:: e filtered-es)
+            filtered-es)))))
+
+(define filter-list
+  (λ (E)
+    (λ (p es)
+      (rec-List es
+                (the (List E) nil)
+                (filter-list-step E p)))))
+
+;; Exercise 10.1
+;;
+;; Define a function called list-length-append-dist that states and proves that
+;; if you append two lists, l1 and l2, and then the length of the result is
+;; equal to the sum of the lengths of l1 and l2.
+
+(claim list-length-append-dist
+       (Π ([E U]
+           [l1 (List E)]
+           [l2 (List E)])
+          (= Nat
+             (length E (append E l1 l2))
+             (+ (length E l1) (length E l2)))))
+
+(define list-length-append-dist
+  (λ (E l1 l2)
+    (ind-List l1
+      (λ (x)
+        (= Nat
+             (length E (append E x l2))
+             (+ (length E x) (length E l2))))
+      (same (length E l2))
+      (λ (e es l1=l2)
+        (cong l1=l2 (+ 1))))))
+```
