@@ -940,4 +940,29 @@
       (same (length E l2))
       (λ (e es l1=l2)
         (cong l1=l2 (+ 1))))))
+        
+;; Exercise 10.2
+;;
+;; In the following exercises we'll use the function called <= that takes two
+;; Nat arguments a, b and evaluates to a type representing the proposition
+;; that a is less than or equal to b.
+
+(claim <=
+       (-> Nat Nat
+           U))
+
+(define <=
+  (λ (a b)
+    (Σ ([k Nat])
+       (= Nat (+ k a) b))))
+
+;; Exercise 10.2.1
+;;
+;; Using <=, state and prove that 1 is less than or equal to 2.
+
+(claim one<=two
+  (<= 1 2))
+
+(define one<=two
+  (cons 1 (same 2)))
 ```
