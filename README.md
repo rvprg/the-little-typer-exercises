@@ -965,4 +965,46 @@
 
 (define one<=two
   (cons 1 (same 2)))
+  
+  
+;; Exercise 10.2.2
+;;
+;; Define a funciton called <=-simplify to state and prove that for all
+;; Nats a, b, n we have that n+a <= b implies a <= b
+;;
+;; NB: You may need to use plusAssociative that was proved in Exercise 8.3.
+
+(claim <=-simplify
+       (Π ([a Nat]
+           [b Nat]
+           [n Nat])
+          (-> (<= (+ n a) b)
+              (<= a b))))
+
+;; This solution is from: https://github.com/paulcadman/the-little-typer
+(define <=-simplify
+  (λ (a b n)
+    (λ (n+a<=b)
+      (cons (+ (car n+a<=b) n)
+            ;;
+            ;; The goal is to produce a value of type:
+            ;;
+            ;; [1] (= Nat (+ (+ (car n+a<=b) n) a)
+            ;;               b)
+            ;;
+            ;; (cdr n+a<=b) is a value of type:
+            ;;
+            ;; [2] (= Nat (+ (car n+a<=b) (+ n a))
+            ;;            b)
+            ;;
+            ;; Using symm and plusAssociative we produce a value of type:
+            ;;
+            ;; [3] (= Nat (+ (+ (car n+a<=b) n) a)
+            ;;            (+ (car n+a<=b) (+ n a)))
+            ;;
+            ;; Using trans with [2] and [3] we produce a value of [1] which
+            ;; is our goal.
+            ;;
+            (trans (symm (plusAssociative n a (car n+a<=b)))
+                   (cdr n+a<=b))))))  
 ```
