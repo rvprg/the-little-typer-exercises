@@ -1007,4 +1007,57 @@
             ;;
             (trans (symm (plusAssociative n a (car n+a<=b)))
                    (cdr n+a<=b))))))  
+                   
+;; Exercise 10.2.3
+;;
+;; Define a function called <=-trans that states and proves that <= is
+;; transitive.
+
+(claim <=-trans
+       (Π ([a Nat]
+           [b Nat]
+           [c Nat])
+          (-> (<= a b)
+              (<= b c)
+              (<= a c))))
+
+;; This solution is from: https://github.com/paulcadman/the-little-typer
+(define <=-trans
+  ;;
+  ;; The goal is to produce a value of type:
+  ;;
+  ;; [1] (<= a c)
+  ;;
+  ;; The target of the replace has type:
+  ;;
+  ;; [2] (= Nat b (+ (car a<=b) a))
+  ;;
+  ;; (mot from) is therefore (mot b) and its type is:
+  ;;
+  ;; [3] (Σ ([k Nat])
+  ;;        (= Nat (+ k b) c))
+  ;;
+  ;; b<=c is a value of [3] so it can be used as the base of reduce.
+  ;;
+  ;; The replace expression therefore produces a value of type (mot to) which is
+  ;; (mot (+ (car a<=b) a)). This has type:
+  ;;
+  ;; [4] (Σ ([k] Nat)
+  ;;        (= Nat (+ k (+ (car a<=b) a )) c))
+  ;;
+  ;; By definition of <= this is the same type as:
+  ;;
+  ;; [5] (<= (+ (car a<=b) a) c)
+  ;;
+  ;; Using <=-simplify we can remove (car a<=b) from [5] to produce a value of
+  ;; [1], our goal type.
+  ;;
+  (λ (a b c)
+    (λ (a<=b b<=c)
+      (<=-simplify a c (car a<=b)
+                   (replace (symm (cdr a<=b))
+                            (λ (l)
+                              (Σ ([k Nat])
+                                 (= Nat (+ k l) c)))
+                            b<=c)))))                   
 ```
